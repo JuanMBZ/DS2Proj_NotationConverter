@@ -1,9 +1,10 @@
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 
 enum Format {
-  infix, prefix, postfix
-}
+  infix=1, prefix=2, postfix=3
+};
 
 void print_usage(char *prog_name) {
   fprintf(stderr, "Usage: %s --from <input_format> --to <input_format> \"<expression_string>\" ", prog_name);
@@ -11,10 +12,11 @@ void print_usage(char *prog_name) {
 }
 
 int main(int argc, char *argv[]) {
-  enum in_format, out_format;
+  enum Format in_format, out_format;
   char option[100];
-  
-  for(int i=1; i<argc; i++) {
+  int i;
+
+  for(i=1; i<argc; i++) {
       if(*argv[i] != '-') {
         break;
       }
@@ -31,6 +33,7 @@ int main(int argc, char *argv[]) {
           fprintf(stderr, "Unknown format: --from %s", argv[i+1]);
           exit(1);
         }
+	i++;
       }
 
       if(strcmp(&(argv[i][1]), "-to") == 0) {
@@ -44,14 +47,14 @@ int main(int argc, char *argv[]) {
           fprintf(stderr, "Unknown format: --to %s", argv[i+1]);
           exit(1);
         }
+	i++;
       }
-      
   }
 
   if(i>=argc)
     print_usage(argv[0]);
 
-  printf("Input form=%d, Output form=%d", in_format, out_format);
+  printf("Input form=%d, Output form=%d\n", in_format, out_format);
   
   return 0;
 }
