@@ -2,16 +2,10 @@
 #include <stdio.h>
 #include <ctype.h>
 
-char *s;
+#include "lexer.h"
 
-enum tokens {
-	tok_eof,
-
-	// num
-	tok_number,
-
-	// operator
-	tok_operator,
+enum token_types {
+	tok_eof, tok_number, tok_operator,
 
 	// parentheses
 	tok_leftp,
@@ -19,65 +13,64 @@ enum tokens {
 };
 
 struct Token {
-	enum tokens tok;
+	enum token_types tok;
 	int symbol;
 };
 
-/*
-struct b_tree {
-	enum Token tok;
-	struct b_tree *left_child;
-	struct b_tree *right_child;
-};
-
-struct stack {
-	int top;
-	struct b_tree *tree_stack;
-}
-*/
-
-struct Token* gettok() {
+struct Token* gettok(char **s) {
 	struct Token *t;
 	t = malloc(sizeof(struct Token));
 
-	while(isspace(*s))
-		s++;
-
-	if(isdigit(*s)) {
+	while(isspace(**s))
+		(*s)++;
+	
+	char c = **s;
+	int offset=1;
+	t->symbol = c;
+	
+	//Reads number input using sscanf, stores number of chars read to offset
+	if(isdigit(c)) {
 		t->tok = tok_number;
+		sscanf(*s, "%d%n", &(t->symbol), &offset);
 	}
 
-	else if(*s == '+' || *s == '-' || *s == '*' || *s == '/') {
+	else if(c == '+' || c == '-' || c == '*' || c == '/') {
 		t->tok = tok_operator;
 	}
 
-	else if(*s =='(') {
+	else if(c =='(') {
 		t->tok = tok_leftp;
 	}
 
-	else if(*s ==')')
+	else if(c ==')')
 		t->tok = tok_rightp;
 
-	else if(*s == '\0')
+	else if(c == '\0')
 		t->tok = tok_eof;
 	
 	else {
-		fprintf(stderr, "Unidentified token '%c' \n", *s);
+		fprintf(stderr, "Unidentified token '%c' \n", c);
 		exit(0);
 	}
-	s++;
-	t->symbol = *s;
+
+	(*s) += offset;
 	return t;
 }
 
+/*** FOR TESTING
 int main() {
-	char *test="1 +  1 ()a";
-	s=test;
+	char *test="2147483647 +  234 ()";
+
 	struct Token *t;
 	do{
-		t=gettok();
-		printf("%d, ", t->tok);
+		t=gettok(&test);
+		if(t->tok == tok_number)
+			printf("%d, ", t->symbol);
+		else
+			printf("%d, ", t->tok);
+			
 	} while(t->tok!=tok_eof);
 	printf("\n");
 	
 }
+*/
