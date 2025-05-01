@@ -4,6 +4,7 @@
 
 #include "lexer.h"
 #include "expression_tree.h"
+#include "dstructs.h"
 
 enum Format {
 	infix, prefix, postfix, EMPTY
