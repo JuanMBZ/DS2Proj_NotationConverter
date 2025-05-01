@@ -55,12 +55,11 @@ expr_tree *stack_peek(stack *s) {
 		return NULL;
 }
 
-// Pops the top of operator stack and assigns the 2 operands from the top of operand stack as right child and left child in that order
+// Pops the 2 nodes from stack s and assigns the 2 operands as the operator's right child and left child in that order
 // Returns an expression tree node containing the operator and its operand children
-expr_tree *pop_operator(stack *operator_s, stack *operand_s) {
-	expr_tree *operator = pop(operator_s);
-	operator->right_child = pop(operand_s);
-	operator->left_child = pop(operand_s);
+expr_tree *assign_operands_to_operator(stack *s, expr_tree *operator) {
+	operator->right_child = pop(s);
+	operator->left_child = pop(s);
 
 	return operator;
 }

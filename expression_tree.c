@@ -49,7 +49,7 @@ expr_tree *infix_to_exprtree(char *input) {
 			// Pop the operator stack and add push it to operand stack
 			top_op = stack_peek(operator_s);
 			while(((top_op != NULL) && (top_op->token->symbol != '('))) {
-				push(operand_s, pop_operator(operator_s, operand_s));
+				push(operand_s, assign_operands_to_operator(operand_s, pop(operator_s)));
 				top_op = stack_peek(operator_s);
 			}
 			// Else push current operator to operator stack
@@ -67,7 +67,7 @@ expr_tree *infix_to_exprtree(char *input) {
 				// Stop when we see a left parenthesis
 				if(stack_peek(operator_s)->token->symbol == '(')
 					break;
-				push(operand_s, pop_operator(operator_s, operand_s));
+				push(operand_s, assign_operands_to_operator(operand_s, pop(operator_s)));
 			}
 			// Make sure the top of the operator is a left parenthesis
 			if(stack_peek(operator_s) == NULL) {
@@ -88,7 +88,7 @@ expr_tree *infix_to_exprtree(char *input) {
 			fprintf(stderr, "Error: A left parenthesis was not closed.\n");
 			exit(1);
 		}
-		push(operand_s, pop_operator(operator_s, operand_s));
+		push(operand_s, assign_operands_to_operator(operand_s, pop(operator_s)));
 	}
 	
 	expr_tree *root=pop(operand_s);

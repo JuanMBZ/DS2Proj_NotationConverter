@@ -24,6 +24,6 @@ stack *create_stack();
 void push(stack *s, expr_tree *node);
 expr_tree *pop(stack *s);
 expr_tree *stack_peek(stack *s);
-expr_tree *pop_operator(stack *operator_s, stack *operand_s);
+expr_tree *assign_operands_to_operator(stack *s, expr_tree *operator);
 
 #endif
