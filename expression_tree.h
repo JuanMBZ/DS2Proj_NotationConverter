@@ -11,5 +11,6 @@
 
 expr_tree *infix_to_exprtree(char *input);
 void infix_traversal(expr_tree *root);
+expr_tree *prefix_to_exprtree(char *input);  // New declaration
 
 #endif
