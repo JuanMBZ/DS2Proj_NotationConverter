@@ -200,3 +200,55 @@ expr_tree *prefix_to_exprtree(char *input) {
     
     return root;
 }
+//postfix
+expr_tree *postfix_to_exprtree(char *input){
+	struct Token *t;
+	stack *operator_s = create_stack();
+	stack *operand_s = create_stack();
+	expr_tree *top_op;
+
+	// While there are tokens to be read
+	do {
+		t = gettok(&input);
+		
+		// If token is a number, push it into operand stack
+		if(t->tok == tok_number) 
+		{
+			push(operand_s, create_node(t));
+		}
+		//If token is an operator,pop the 2 operands in operand stack and put it to the left and the right child of the,create a new node for the combined operator and operands and push it to operand stack
+		else if(t->tok == tok_operator)
+		{
+			expr_tree* right_child = pop(operand_s);
+			expr_tree* left_child = pop(operand_s);
+			expr_tree* op_node = create_node(t);
+			op_node->left_child = left_child;
+			op_node->right_child = right_child;
+			push(operand_s,op_node);
+		}
+		//If the token is invalid
+		else
+		{
+			fprintf(stderr, "Error: Invalid token '%c' in postfix expression.\n", t->symbol);
+			exit(1);
+		}
+	}while(t->tok != tok_eof);
+
+	expr_tree *root=pop(operand_s);
+	return root;
+}
+//postfix traversal
+void postfix_traversal(expr_tree *root)
+{
+	if(root == NULL)
+        	return;
+	// Print current node 
+    	postfix_traversal(root->left_child);
+    	postfix_traversal(root->right_child);
+    
+    	if(root->token->tok == tok_number)
+        	printf("%d ", root->token->symbol);
+    	else
+        	printf("%c ", root->token->symbol);
+}
+
