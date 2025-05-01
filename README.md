@@ -10,6 +10,6 @@ If your system does not have the make program, run with gcc:
 
 ## Running
 The program is called like this: 
->./ncon [Options] <expression>
+>./ncon [Options] \<expression\>
 
 On linux systems
