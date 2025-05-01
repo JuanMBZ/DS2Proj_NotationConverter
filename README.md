@@ -13,3 +13,6 @@ The program is called like this:
 >./ncon [Options] \<expression\>
 
 On linux systems
+
+Example:
+>./ncon --from infix --to infix "12 + 34 * (87 / 86 - (23-1))"
