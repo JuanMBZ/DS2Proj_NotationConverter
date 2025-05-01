@@ -5,6 +5,7 @@
 #include "lexer.h"
 #include "expression_tree.h"
 #include "dstructs.h"
+#include <string.h>
 
 #ifndef STACK_SIZE
 #define STACK_SIZE 1000
@@ -132,12 +133,13 @@ void prefix_traversal(expr_tree *root) {
     prefix_traversal(root->left_child);
     prefix_traversal(root->right_child);
 }
+
 // parse prefix to an expression tree recursively
 static expr_tree *parse_prefix(char **input) {
 
 	// Get next token and create node
     struct Token *t = gettok(input);
-
+    // error handling
     if(t->tok == tok_eof) {
         fprintf(stderr, "Error: Unexpected end of input while parsing prefix expression.\n");
         exit(1);
@@ -165,4 +167,17 @@ static expr_tree *parse_prefix(char **input) {
         fprintf(stderr, "Error: Invalid token '%c' in prefix expression.\n", t->symbol);
         exit(1);
     }
+}
+
+expr_tree *prefix_to_exprtree(char *input) {
+    char *input_ptr = input;
+    expr_tree *root = parse_prefix(&input_ptr);
+    // error handling
+    struct Token *t = gettok(&input_ptr);
+    if(t->tok != tok_eof) {
+        fprintf(stderr, "Error: Extra tokens after prefix expression.\n");
+        exit(1);
+    }
+    
+    return root;
 }
