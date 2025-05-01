@@ -52,21 +52,3 @@ struct Token* gettok(char **s) {
 	(*s) += offset;
 	return t;
 }
-
-/*** FOR TESTING
-int main() {
-	char *test="2147483647 +  234 ()";
-
-	struct Token *t;
-	do{
-		t=gettok(&test);
-		if(t->tok == tok_number)
-			printf("%d, ", t->symbol);
-		else
-			printf("%d, ", t->tok);
-			
-	} while(t->tok!=tok_eof);
-	printf("\n");
-	
-}
-*/

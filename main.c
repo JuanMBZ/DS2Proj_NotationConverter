@@ -119,32 +119,5 @@ int main(int argc, char *argv[]) {
 			break;
 	}
 	
-
-	//FOR TESTING
-	/*
-	printf("Input form=%d, Output form=%d\n", in_format, out_format);
-	
-	stack *expr_tree_stack = create_stack();
-
-	do {
-		t = gettok(&argv[i]);
-		push(expr_tree_stack, create_node(t));	
-
-		if(t->tok == tok_number) 
-			printf("%d, ", t->symbol);
-		else
-			printf("%d, ", t->tok);
-	} while(t->tok != tok_eof);
-	printf("\n");
-
-	printf("Expression tree stack: ");
-	while(expr_tree_stack->top >= 0) {
-		curr_tok = pop(expr_tree_stack)->token;
-		if(curr_tok->tok == tok_number)
-			printf("%d ", curr_tok->symbol);
-		else
-			printf("%c ", curr_tok->symbol);
-	}
-	*/
 	return 0;
 }

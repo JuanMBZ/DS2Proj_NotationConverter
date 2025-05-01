@@ -1,6 +1,11 @@
 #ifndef DSTRUCTS_H
 #define DSTRUCTS_H
-	
+/***
+ *	Place data structure definitions and operations here.
+ *
+ ***/
+
+
 #define STACK_SIZE 1000
 
 typedef struct binary_expr_tree {
