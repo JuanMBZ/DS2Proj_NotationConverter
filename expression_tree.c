@@ -99,7 +99,7 @@ expr_tree *infix_to_exprtree(char *input) {
 	
 	return root;
 }
-
+// infix traversal
 void infix_traversal(expr_tree *root) {
 	if(root==NULL)
 		return;
@@ -117,4 +117,40 @@ void infix_traversal(expr_tree *root) {
 
 	if(!(root->left_child == NULL && root->right_child == NULL))
 		printf(")");
+}
+// prefix
+void prefix_traversal(expr_tree *root) {
+    if(root == NULL)
+        return;
+    
+    // Print current node (root-first traversal)
+    if(root->token->tok == tok_number)
+        printf("%d ", root->token->symbol);
+    else
+        printf("%c ", root->token->symbol);
+    
+    prefix_traversal(root->left_child);
+    prefix_traversal(root->right_child);
+}
+// parse prefix to an expression tree recursively
+static expr_tree *parse_prefix(char **input) {
+    // Get next token and create node
+    struct Token *t = gettok(input);
+    expr_tree *node = create_node(t);
+    
+    // Numbers become leaf nodes
+    if(t->tok == tok_number) {
+        return node;
+    }
+    // recursively parse operands as left/children
+    else {
+        node->left_child = parse_prefix(input);
+        node->right_child = parse_prefix(input);
+        return node;
+    }
+}
+
+expr_tree *prefix_to_exprtree(char *input) {
+    char *input_ptr = input;  // Track parsing progress through string
+    return parse_prefix(&input_ptr);
 }
