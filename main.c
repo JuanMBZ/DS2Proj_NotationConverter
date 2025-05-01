@@ -22,7 +22,8 @@ int main(int argc, char *argv[]) {
 	expr_tree *root;
 	//struct Token *t, *curr_tok;	//For testing
 	
-	//For loop to check all user [Options] entered
+	// For loop to check all user [Options] entered
+	// Manual parser for arguments, since getopts(3) can't handle long options
 	for(i=1; i<argc; i++) {
 
 		//Checks if current argv has a '-' prefix
@@ -94,8 +95,7 @@ int main(int argc, char *argv[]) {
 			root = infix_to_exprtree(argv[i]);
 			break;
 		case prefix:
-			// Palagay nalang dito ng <format> to tree function
-			// Nasa argv[i] nakalagay ang expression, kaya kailangan yun isabay sa arguments ng inyong function
+			root = prefix_to_exprtree(argv[i]);
 			break;
 		case postfix:
 			// Palagay nalang dito ng <format> to tree function
@@ -112,6 +112,9 @@ int main(int argc, char *argv[]) {
 			printf("\n");
 			break;
 		case prefix:
+			printf("Expresson tree infix Traversal:\n");
+			prefix_traversal(root);
+			printf("\n");
 			break;
 		case postfix:
 			break;
