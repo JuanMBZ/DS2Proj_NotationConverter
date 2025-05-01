@@ -134,23 +134,35 @@ void prefix_traversal(expr_tree *root) {
 }
 // parse prefix to an expression tree recursively
 static expr_tree *parse_prefix(char **input) {
-    // Get next token and create node
+
+	// Get next token and create node
     struct Token *t = gettok(input);
+
+    if(t->tok == tok_eof) {
+        fprintf(stderr, "Error: Unexpected end of input while parsing prefix expression.\n");
+        exit(1);
+    }
+    // Create a new tree node for this token
     expr_tree *node = create_node(t);
     
-    // Numbers become leaf nodes
     if(t->tok == tok_number) {
         return node;
     }
-    // recursively parse operands as left/children
-    else {
-        node->left_child = parse_prefix(input);
-        node->right_child = parse_prefix(input);
+    else if(t->tok == tok_operator) {
+       // error handling
+        const char *valid_ops = "+-*/";  
+        if(!strchr(valid_ops, t->symbol)) {
+            fprintf(stderr, "Error: Unsupported operator '%c' in prefix expression.\n", t->symbol);
+            exit(1);
+        }
+        
+        node->left_child = parse_prefix(input); // parse left operand
+        node->right_child = parse_prefix(input); // parse right operand
         return node;
     }
-}
-
-expr_tree *prefix_to_exprtree(char *input) {
-    char *input_ptr = input;  // Track parsing progress through string
-    return parse_prefix(&input_ptr);
+    else {
+        // Catches invalid token types 
+        fprintf(stderr, "Error: Invalid token '%c' in prefix expression.\n", t->symbol);
+        exit(1);
+    }
 }
