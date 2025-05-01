@@ -48,7 +48,7 @@ expr_tree *infix_to_exprtree(char *input) {
 			// While operator stack is not empty and the top operator is not a left parenthesis, and also current token operator has higher precendence 
 			// Pop the operator stack and add push it to operand stack
 			top_op = stack_peek(operator_s);
-			while(((top_op != NULL) && (top_op->token->symbol != '(')) && (top_op->token->precedence > t->precedence)) {
+			while(((top_op != NULL) && (top_op->token->symbol != '('))) {
 				push(operand_s, pop_operator(operator_s, operand_s));
 				top_op = stack_peek(operator_s);
 			}
@@ -104,19 +104,38 @@ expr_tree *infix_to_exprtree(char *input) {
 void infix_traversal(expr_tree *root) {
 	if(root==NULL)
 		return;
-	
-	// Since all numbers are leaf nodes, check if it is a leaf node before outputting parentheses
+
 	if(!(root->left_child == NULL && root->right_child == NULL))
 		printf("(");
-
 	infix_traversal(root->left_child);
+
 	if(root->token->tok == tok_number)
 		printf("%d", root->token->symbol);
 	else
 		printf("%c", root->token->symbol);
-	infix_traversal(root->right_child);
 
+	infix_traversal(root->right_child);
 	if(!(root->left_child == NULL && root->right_child == NULL))
+		printf(")");
+}
+
+void infix_neccessary_traversal(expr_tree *root, struct Token *parent_tok) {
+	if(root==NULL)
+		return;
+	
+	if((parent_tok->symbol == '*' && (root->token->precedence == 1)) 
+			|| (parent_tok->symbol == '/' && (root->token->precedence==1 || root->token->symbol =='*')))
+		printf("(");
+	infix_neccessary_traversal(root->left_child, root->token);
+
+	if(root->token->tok == tok_number)
+		printf("%d", root->token->symbol);
+	else
+		printf("%c", root->token->symbol);
+
+	infix_neccessary_traversal(root->right_child, root->token);
+	if((parent_tok->symbol == '*' && (root->token->precedence == 1)) 
+			|| (parent_tok->symbol == '/' && (root->token->precedence==1 || root->token->symbol =='*')))
 		printf(")");
 }
 // prefix
