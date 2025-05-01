@@ -4,19 +4,8 @@
 
 #include "lexer.h"
 
-enum token_types {
-	tok_eof, tok_number, tok_operator,
-
-	// parentheses
-	tok_leftp,
-	tok_rightp
-};
-
-struct Token {
-	enum token_types tok;
-	int symbol;
-};
-
+// Reads the next given token from the input string, automatically moves pointer to string
+// returns a pointer to a token variable
 struct Token* gettok(char **s) {
 	struct Token *t;
 	t = malloc(sizeof(struct Token));
@@ -27,6 +16,7 @@ struct Token* gettok(char **s) {
 	char c = **s;
 	int offset=1;
 	t->symbol = c;
+	t->precedence = 0;
 	
 	//Reads number input using sscanf, stores number of chars read to offset
 	if(isdigit(c)) {
@@ -34,8 +24,14 @@ struct Token* gettok(char **s) {
 		sscanf(*s, "%d%n", &(t->symbol), &offset);
 	}
 
-	else if(c == '+' || c == '-' || c == '*' || c == '/') {
+	else if(c == '+' || c=='-') {
 		t->tok = tok_operator;
+		t->precedence = 1;
+	}
+
+	else if(c == '*' || c=='/') {
+		t->tok = tok_operator;
+		t->precedence = 2;
 	}
 
 	else if(c =='(') {
@@ -50,7 +46,7 @@ struct Token* gettok(char **s) {
 	
 	else {
 		fprintf(stderr, "Unidentified token '%c' \n", c);
-		exit(0);
+		exit(1);
 	}
 
 	(*s) += offset;
