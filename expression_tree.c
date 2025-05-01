@@ -12,6 +12,19 @@
 
 // Creates an expression tree given a valid infix expression input
 // Implements shunting yard algorithm defined in https://en.wikipedia.org/wiki/Shunting_yard_algorithm, with changes to output an expr_tree
+void test_postfix(expr_tree *root) {
+	if(root == NULL) 
+		return;
+
+	test_postfix(root->left_child);
+	test_postfix(root->right_child);
+	
+	if(root->token->tok == tok_number)
+		printf("%d ", root->token->symbol);
+	else
+		printf("%c ", root->token->symbol);
+}
+
 // Returns the root node to the expression tree
 expr_tree *infix_to_exprtree(char *input) {
 	struct Token *t;
@@ -68,7 +81,7 @@ expr_tree *infix_to_exprtree(char *input) {
 	
 	//While there are tokens at the top of the stack
 	while(stack_peek(operator_s)) {
-		assert("A left parenthesis was not closed." && stack_peek(operator_s)->token->symbol != '(');
+		//assert("A left parenthesis was not closed." && stack_peek(operator_s)->token->symbol != '(');
 		// Make sure there is no lone left parenthesis
 		if(stack_peek(operator_s)->token->symbol == '(') {
 			fprintf(stderr, "Error: A left parenthesis was not closed.\n");
@@ -76,8 +89,15 @@ expr_tree *infix_to_exprtree(char *input) {
 		}
 		push(operand_s, pop_operator(operator_s, operand_s));
 	}
-
-	return stack_peek(operand_s);
+	
+	expr_tree *root=pop(operand_s);
+	// Check if there are still some operands remaining in operand stack
+	if(stack_peek(operand_s) != NULL) {
+		fprintf(stderr, "Error: There are operands with missing operators.\n");
+		exit(1);
+	}
+	
+	return root;
 }
 
 void infix_traversal(expr_tree *root) {
