@@ -114,9 +114,6 @@ int main(int argc, char *argv[]) {
 		case prefix:
 			break;
 		case postfix:
-			printf("Expresson tree postfix Traversal:\n");
-			test_postfix(root);
-			printf("\n");
 			break;
 		default:
 			break;
