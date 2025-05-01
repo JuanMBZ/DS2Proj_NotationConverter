@@ -108,10 +108,10 @@ int main(int argc, char *argv[]) {
 	switch(out_format) {
 		case infix:
 			printf("Expresson tree infix traversal (with minimal parentheses):\n");
-			infix_traversal(root);
+			infix_neccessary_traversal(root, root->token);
 			printf("\n");
 			printf("Expresson tree infix traversal (with all parentheses):\n");
-			infix_neccessary_traversal(root, root->token);
+			infix_traversal(root);
 			printf("\n");
 			break;
 		case prefix:
