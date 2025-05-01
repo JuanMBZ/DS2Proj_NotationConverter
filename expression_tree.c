@@ -11,6 +11,7 @@
 #endif
 
 // Creates an expression tree given a valid infix expression input
+// Implements shunting yard algorithm defined in https://en.wikipedia.org/wiki/Shunting_yard_algorithm, with changes to output an expr_tree
 // Returns the root node to the expression tree
 expr_tree *infix_to_exprtree(char *input) {
 	struct Token *t;

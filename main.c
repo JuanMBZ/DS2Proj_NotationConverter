@@ -16,19 +16,6 @@ void print_usage(char *prog_name) {
 	exit(1);
 }
 
-void test_postfix(expr_tree *root) {
-	if(root == NULL) 
-		return;
-
-	test_postfix(root->left_child);
-	test_postfix(root->right_child);
-	
-	if(root->token->tok == tok_number)
-		printf("%d ", root->token->symbol);
-	else
-		printf("%c ", root->token->symbol);
-}
-
 int main(int argc, char *argv[]) {
 	int in_format=EMPTY, out_format=EMPTY;
 	int i;
