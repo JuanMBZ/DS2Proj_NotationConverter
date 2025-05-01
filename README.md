@@ -6,7 +6,7 @@ Run:
 >make
 
 If your system does not have the make program, run with gcc:
->gcc main.c lexer.c expression_tree.c -o ncon -Wall -Wextra -pedantic
+>gcc main.c lexer.c expression_tree.c dstructs.c -o ncon -Wall -Wextra -pedantic
 
 ## Running
 The program is called like this: 
