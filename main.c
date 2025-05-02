@@ -121,7 +121,7 @@ int main(int argc, char *argv[]) {
 		case postfix:
 			printf("Expression tree postfix traversal:\n");
 			postfix_traversal(root);
-			printf("\n');
+			printf("\n");
 			break;
 		default:
 			break;
