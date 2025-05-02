@@ -224,7 +224,8 @@ expr_tree *postfix_to_exprtree(char *input){
  			push(operand_s,op_node);
  		}
 		//If the token is invalid
-		else{
+		else if(t->tok == tok_leftp || t->tok == tok_rightp)
+		{
 			fprintf(stderr, "Error: Invalid token '%c' in postfix expression.\n", t->symbol);
  			exit(1);
 		}
