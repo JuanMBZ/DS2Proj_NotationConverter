@@ -14,5 +14,7 @@ void infix_traversal(expr_tree *root);
 void infix_neccessary_traversal(expr_tree *root, struct Token *parent_tok);
 expr_tree *prefix_to_exprtree(char *input);  
 void prefix_traversal(expr_tree *root);
+expr_tree *postfix_to_exprtree(char *input);
+void postfix_traversal(expr_tree *root);
 
 #endif
