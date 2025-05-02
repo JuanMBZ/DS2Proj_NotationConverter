@@ -223,6 +223,11 @@ expr_tree *postfix_to_exprtree(char *input){
  			op_node->right_child = right_child;
  			push(operand_s,op_node);
  		}
+		//If the token is invalid
+		else{
+			fprintf(stderr, "Error: Invalid token '%c' in postfix expression.\n", t->symbol);
+ 			exit(1);
+		}
  	}while(t->tok != tok_eof);
  
  	expr_tree *root=pop(operand_s);
