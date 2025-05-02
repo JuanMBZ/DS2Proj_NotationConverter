@@ -98,8 +98,7 @@ int main(int argc, char *argv[]) {
 			root = prefix_to_exprtree(argv[i]);
 			break;
 		case postfix:
-			// Palagay nalang dito ng <format> to tree function
-			// Nasa argv[i] nakalagay ang expression, kaya kailangan yun isabay sa arguments ng inyong function
+			root = postfix_to_exprtree(argv[i]);
 			break;
 		default:
 			break;
@@ -120,6 +119,9 @@ int main(int argc, char *argv[]) {
 			printf("\n");
 			break;
 		case postfix:
+			printf("Expression tree postfix traversal:\n");
+			postfix_traversal(root);
+			printf("\n');
 			break;
 		default:
 			break;
