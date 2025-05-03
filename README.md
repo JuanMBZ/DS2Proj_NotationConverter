@@ -5,7 +5,9 @@ Project for CS110 - Discrete Structures 2. CLI Utility Program to convert numeri
 -To compile the Program, use any terminal(GNOME Terminal, PowerShell, Command Prompt)  
 If your system have the make program, just type:  
 >make  
+
 Otherwise, run with gcc:  
+
 >gcc main.c lexer.c expression_tree.c dstructs.c -o ncon -Wall -Wextra -pedantic  
 
 ## Running
@@ -23,15 +25,16 @@ The valid formats for running are:
 
 ./ncon  
 [Options] = --from infix --to prefix  
-            --from infix --to postfix  
-            --from prefix --to infix  
-            --from prefix --to postfix  
-            --from postfix --to infix  
-            --from postfix --to prefix  
+           >> --from infix --to postfix  
+           >> --from prefix --to infix  
+           >> --from prefix --to postfix  
+           >> --from postfix --to infix  
+           >> --from postfix --to prefix  
 \<expression\>  
-Note:  -The program only support ADDITION(+), SUBTRACTION(-), MULTIPLICATION(*), and DIVISION(/) operators.It assumes standard precedence where * , / is higher than +, -  
+**Note:**  
+-The program only support ***ADDITION(+)***, ***SUBTRACTION(-)***, ***MULTIPLICATION(*)**, and ***DIVISION(/)*** operators.It assumes standard precedence where * , / is higher than +, -  
         and left-to-right associativity for operators of the same precedence.  
-        -The expression must be enclosed by a QOUTATION MARK("").  
+        -The expression must be enclosed by a QUOTATION MARK("").  
   
 If the <input_format> is infix, the expression must be on infix notation, or  
         --from infix --to prefix " (1 + 2) * 3"  
