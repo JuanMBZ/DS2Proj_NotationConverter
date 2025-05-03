@@ -25,15 +25,14 @@ The valid formats for running are:
 
 ./ncon  
 [Options] = --from infix --to prefix  
-           >> --from infix --to postfix  
-           >> --from prefix --to infix  
-           >> --from prefix --to postfix  
-           >> --from postfix --to infix  
-           >> --from postfix --to prefix  
+           --from infix --to postfix  
+            --from prefix --to infix  
+            --from prefix --to postfix  
+            --from postfix --to infix  
+            --from postfix --to prefix  
 \<expression\>  
 **Note:**  
--The program only support ***ADDITION(+)***, ***SUBTRACTION(-)***, ***MULTIPLICATION(*)**, and ***DIVISION(/)*** operators.It assumes standard precedence where * , / is higher than +, -  
-        and left-to-right associativity for operators of the same precedence.  
+-The program only support ***ADDITION(+)***, ***SUBTRACTION(-)***,*** MULTIPLICATION(\*)***, and ***DIVISION(/)*** operators.It assumes standard precedence where * , / is higher than +, - and left-to-right associativity for operators of the same precedence.  
         -The expression must be enclosed by a QUOTATION MARK("").  
   
 If the <input_format> is infix, the expression must be on infix notation, or  
