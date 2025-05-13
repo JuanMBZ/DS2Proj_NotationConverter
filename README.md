@@ -25,7 +25,7 @@ Otherwise, run with gcc:
 Instructions on program usage can be seen by running:
 > ./ncon --help
 
-More specific explainations on program options and how the program works can be seen in the GUIDE.txt file or by running:
+More specific explainations on program options and how the program works can be seen by opening the GUIDE.txt file or by running:
 > ./ncon --guide
 
 
