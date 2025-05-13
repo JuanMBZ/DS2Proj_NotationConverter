@@ -1,0 +1,69 @@
+NAME
+	ncon - Notation Converter, Discrete Structures 2 project
+
+SYNOPSIS
+	./ncon [Options] --from <input_format> --to <output_format> "<expression_string>"
+	./ncon [Options] <input_format> <output_format> "<expression_string>"
+
+DESCRIPTION
+	ncon is a CLI utility program used to convert mathematical expressions between infix, prefix (Polish), and postfix (Reverse Polish) notations.
+
+	It accepts any valid numerical expression formed from the basic operators +, -, *, and / (in addition to the left and right parentheses in infix notation). Numbers can range from 0 to 999999999.
+	Numbers must be separated by spaces when the input format is prefix or postfix. Apart from that, spaces can be used between expression symbols or not at all.
+	This behavior is achieved by the program's handwritten lexer that recognizes each token(operator or operand) in the input expression sequentially.
+
+	<input_format> and <output_format> should be equal to the values [infix | prefix | postfix]. Below is a brief description of each.
+	1. Infix Notation - It is the most common and human-readable format. The operator is placed between the operands.  
+			- Requires parentheses to clarify the order of the operations(precedence).   
+			- Evaluation is done on operator precedence and associativity.  
+				Example:  
+					*A + B , (A - B) + C*  
+					*1 + 2, (12 - 6) + 7*  
+	2. Prefix Notation(Polish Notation) - Operator comes before the operands. No need for parentheses, as the structure defines the order.  
+				Example:   
+					* + A B C  
+					* + 2 4 6, which is same as (2 + 4) * 6 in infix notation  
+	3. Postfix Notation(Reverse Polish Notation) - Operator comes after the operands. It also doesn't need parentheses as the structure defines the order.  
+				Example:   
+					A B + C *  
+					2 4 + 6 *, which is same as (2 + 4) * 6 in infix notation  
+
+	The <input_format> and <output_format> are required arguments for the program to run. Some examples of program usage is shown below:
+		./ncon --evaluate --from infix --to postfix "1 + 2 - 3"
+		./ncon --neccessary --to infix --from postfix "1 2 + 3 -"
+		./ncon --evaluate --neccessary prefix infix "_- + 1 2 3"
+
+	Note that the prefix notation expression above is preceded with an underscore '_'. This is required to tell the program that this argument is not an option since all options are preceded with a '-'.
+	Underscores in this program are treated the same way as whitespaces and are just skipped by the program's expression tokenizer.
+	If --from or --to is omitted, <input_format> and <output_format> will be whatever the first two non-option arguments will be in that order. 
+
+	The core logic of this program's conversion is to first build an expression tree by sequentially reading each token in the expression string, keeping in mind operator precedence and associativity.
+	Then the output format conversion is obtained by performing the neccessary traversal of the resulting expression tree.
+
+OPTIONS
+	-e, --evaluate
+		Evaluates the expression tree built from the expression string given by the user.
+		Expression tree is evaluated by recursively evaluating each descendant of root node until the leaf node operands are reached.
+
+	-n, --neccessary
+		If the <output_format> given by the user is infix, this option will result in the program printing only the neccessary parentheses to determine operator precedence of the expression string.
+		Otherwise this option does nothing.
+
+	-h, --help
+		Prints a brief description on program usage, as well as some examples on how to ues it. Also briefly describes the function of each option argument, then exits the program. 
+
+	-g, --guide
+		Prints this program manual to user terminal and exits the program.
+
+	-f, --from
+		Precedes the <input_format> argument and dictates how the program will read the expression string. It is vital that this holds the proper notation that the expression string is written in.
+		Can be omitted, and in this case <input_format> will be whatever the first non-option argument is.
+
+	-t, --to
+		Precedes the <output_format> argument and dictates what the program will convert the expression string into. 
+		Achieved by performing the neccessary traversal based on the format argument passed by the user.
+
+		Can be omitted, and in this case <output_format> will be whatever the second non-option argument is.
+
+AUTHOR
+	Written by Juan Miguel B. Zurbito, Joshua Rene Latagan, and Jayson Tripulca
