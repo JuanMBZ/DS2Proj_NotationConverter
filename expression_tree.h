@@ -16,5 +16,6 @@ expr_tree *prefix_to_exprtree(char *input);
 void prefix_traversal(expr_tree *root);
 expr_tree *postfix_to_exprtree(char *input);
 void postfix_traversal(expr_tree *root);
+int eval_tree(expr_tree *root);
 
 #endif

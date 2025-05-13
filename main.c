@@ -1,6 +1,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <getopt.h>
+#include <errno.h>
 
 #include "lexer.h"
 #include "expression_tree.h"
@@ -11,107 +13,137 @@ enum Format {
 };
 
 void print_usage(char *prog_name) {
-	fprintf(stderr, "Usage: %s --from <input_format> --to <output_format> \"<expression_string>\"\n", prog_name);
-	fprintf(stderr, "Input and output formats: infix, prefix, or postfix.\n");
-	exit(1);
+	fprintf(stderr, "Usage: %s [Options] --from <input_format> --to <output_format> \"<expression_string>\"\n", prog_name);
+	fprintf(stderr, "   or: %s [Options] <input_format> <output_format> \"<expression_string>\"\n", prog_name);
+	fprintf(stderr, "\nWhere:\n");
+	fprintf(stderr, "   <input_format> and <output_format> = [infix | prefix | postfix]\n");
+	fprintf(stderr, "   <expression_string>                = Any valid numerical expression. Numbers can range from [1, 1000000000).\n");
+	fprintf(stderr, "                                        Operators are limited to +,-,* and /, (in addition to left and right parenthesis in infix notation).\n"); 
+	fprintf(stderr, "\nOptions:\n");
+	fprintf(stderr, "   -e, --evaluate         Evaluates the expression and prints the result\n");
+	fprintf(stderr, "   -n, --neccessary       Prints an output with INFIX notation with minimal/neccessary parentheses\n");
+	fprintf(stderr, "   -h, --help             Display this help text and exit\n");
+	fprintf(stderr, "   -g, --guide            Prints the manual for this program\n");
+	fprintf(stderr, "\n");
+	exit(0);
 }
+
+void assign_format(int *format, char *optarg, char **argv) {
+	if(strcmp(optarg, "infix") == 0)
+		*format=infix;
+	else if(strcmp(optarg, "prefix") == 0) 
+		*format=prefix;
+	else if(strcmp(optarg, "postfix") == 0)
+		*format=postfix;
+	else {
+		fprintf(stderr, "Error: %s.\nUse %s --help to print program usage.\n", strerror(EINVAL), argv[0]);
+		exit(EINVAL);
+	}
+}
+
+int eval_flag=0;
+int neccessary_flag=0;
+// Defines the options used for this program
+// Passed as argument to getopt_long from <getopt.h>
+struct option longopts[] = {
+	{"from", required_argument, 0, 'f'},
+	{"to", required_argument, 0, 't'},
+	{"help", no_argument, 0, 'h'},
+	{"guide", no_argument, 0, 'g'},
+	/* This option sets flag eval_flag */
+	{"evaluate", no_argument, &eval_flag, 1},
+	{"neccessary", no_argument, &neccessary_flag, 1},
+	{0, 0, 0, 0}
+};
 
 int main(int argc, char *argv[]) {
 	int in_format=EMPTY, out_format=EMPTY;
-	int i;
+	int c;
 	expr_tree *root;
-	//struct Token *t, *curr_tok;	//For testing
 	
-	// For loop to check all user [Options] entered
-	// Manual parser for arguments, since getopts(3) can't handle long options
-	for(i=1; i<argc; i++) {
-
-		//Checks if current argv has a '-' prefix
-		if(*argv[i] != '-') {
+	// Evaluate user options using getopt_long
+	while(1) {
+		int option_index=0;			// getopt_long stores current long option (from longopts) here
+		c = getopt_long(argc, argv, "hgenf:t:", longopts, &option_index);
+		
+		if(c == -1)
 			break;
+
+		switch(c) {
+			//Check case for when getopt_long assigns an eval_flag
+			case 0:	//User set an option flag so just continue
+				break;
+			case 'h':
+				print_usage(argv[0]);
+				break;
+			case 'g':
+				break;
+			case 'e':
+				eval_flag=1;
+				break;
+			case 'n':
+				neccessary_flag=1;
+				break;
+			case 'f':
+				assign_format(&in_format, optarg, argv);
+				break;
+			case 't':
+				assign_format(&out_format, optarg, argv);
+				break;
+			case '?':
+				/* getopt will have already printed the error message so we exit */
+				exit(errno);
+			default: // Unknown behavior
+				fprintf(stderr, "Error: %s, %c.", strerror(EINVAL), c);	// Invalid argument
+				exit(EINVAL);
 		}
-
-		// Read user input/output expression format
-		if(strcmp(&(argv[i][1]), "-from") == 0) {      
-
-			if(strcmp(argv[i+1], "infix") == 0)
-				in_format=infix;
-			else if(strcmp(argv[i+1], "prefix") == 0) 
-				in_format=prefix;
-			else if(strcmp(argv[i+1], "postfix") == 0)
-				in_format=postfix;
-			else {
-				fprintf(stderr, "Unknown format: --from %s\n", argv[i+1]);
-				exit(1);
-			}
-			// Move to next arg
-			i++;
-		}
-
-		// Read user output expression format
-		else if(strcmp(&(argv[i][1]), "-to") == 0) {
-
-			if(strcmp(argv[i+1], "infix") == 0)
-				out_format=infix;
-			else if(strcmp(argv[i+1], "prefix") == 0) 
-				out_format=prefix;
-			else if(strcmp(argv[i+1], "postfix") == 0)
-				out_format=postfix;
-			else {
-				fprintf(stderr, "Unknown format: --to %s\n", argv[i+1]);
-				exit(1);
-			}
-			// Move to next arg
-			i++;
-		}
-
-		else if(strcmp(&(argv[i][1]), "-help") == 0) {
-			print_usage(argv[0]);
-		}
-
-		else {
-			fprintf(stderr, "Run %s --help to print program usage.\n", argv[0]);
-			exit(1);
-		}
-	}
-
-	// Check for missing arguments
-	if(i>=argc) {
-		fprintf(stderr, "Missing arguments.\n");
-		fprintf(stderr, "Run %s --help to print program usage.\n", argv[0]);
-		exit(1);
 	}
 	
-	//Checks if user inputted missing formats
-	if(in_format == EMPTY || out_format == EMPTY) {
-		fprintf(stderr, "Program needs format of input and output expressions to be specified.\n");
-		fprintf(stderr, "Run %s --help to print program usage.\n", argv[0]);
-		exit(1);
+	// If user didn't use --from and --to
+	if(in_format == EMPTY && out_format == EMPTY) {
+		if(optind+1 < argc) {
+			assign_format(&in_format, argv[optind], argv);
+			assign_format(&out_format, argv[optind+1], argv);
+		}
+		optind += 2;
 	}
 	
+	//Check for missing required args
+	if(optind >= argc) {
+		fprintf(stderr, "Error: Missing arguments.\nUse %s --help to print program usage.\n", argv[0]);
+		exit(1);
+	}
+
 	// Convert argv[i] expression to expression tree from user specified input format
 	switch(in_format) {
 		case infix:
-			root = infix_to_exprtree(argv[i]);
+			root = infix_to_exprtree(argv[optind]);
 			break;
 		case prefix:
-			root = prefix_to_exprtree(argv[i]);
+			root = prefix_to_exprtree(argv[optind]);
 			break;
 		case postfix:
-			root = postfix_to_exprtree(argv[i]);
+			root = postfix_to_exprtree(argv[optind]);
 			break;
 		default:
+			fprintf(stderr, "Program needs format of both input and output expressions to be specified.\n");
+			fprintf(stderr, "Run %s --help to print program usage.\n", argv[0]);
+			exit(1);
 			break;
 	}
 	
 	switch(out_format) {
 		case infix:
-			printf("Expresson tree infix traversal (with minimal parentheses):\n");
-			infix_neccessary_traversal(root, root->token);
-			printf("\n");
-			printf("Expresson tree infix traversal (with all parentheses):\n");
-			infix_traversal(root);
-			printf("\n");
+			if(neccessary_flag) {
+				printf("Expresson tree infix traversal (with minimal parentheses):\n");
+				infix_neccessary_traversal(root, root->token);
+				printf("\n");
+			}
+			else {
+				printf("Expresson tree infix traversal (with all parentheses):\n");
+				infix_traversal(root);
+				printf("\n");
+			}
 			break;
 		case prefix:
 			printf("Expresson tree prefix traversal:\n");
@@ -124,7 +156,14 @@ int main(int argc, char *argv[]) {
 			printf("\n");
 			break;
 		default:
+			fprintf(stderr, "Program needs format of both input and output expressions to be specified.\n");
+			fprintf(stderr, "Run %s --help to print program usage.\n", argv[0]);
+			exit(1);
 			break;
+	}
+
+	if(eval_flag) {
+		printf("Expression Evaluation: %d\n", eval_tree(root));
 	}
 	
 	return 0;

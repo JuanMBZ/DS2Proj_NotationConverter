@@ -28,7 +28,7 @@ stack *create_stack() {
 void push(stack *s, expr_tree *node) {
 	// Check for available space in stack
 	if((s->top) >= STACK_SIZE) {
-		fprintf(stderr, "Stack overflow error, input expression has too many symbols.\n");
+		fprintf(stderr, "Stack Overflow Error: Number of symbols should not exceed stack size(%d).\n", STACK_SIZE);
 		exit(1);
 	}
 
@@ -40,7 +40,7 @@ expr_tree *pop(stack *s) {
 	// Check if there's something at the top of stack s
 	if(s->top < 0) {
 		//assert(("Stack underflow error, input expression has missing symbols.\n" && s->top < 0));
-		fprintf(stderr, "Stack underflow error, input expression has missing symbols.\n");
+		fprintf(stderr, "Stack Underflow Error: Malformed expression.\n");
 		exit(1);
 	}
 	

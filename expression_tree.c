@@ -48,7 +48,7 @@ expr_tree *infix_to_exprtree(char *input) {
 			// While operator stack is not empty and the top operator is not a left parenthesis, and also current token operator has higher precendence 
 			// Pop the operator stack and add push it to operand stack
 			top_op = stack_peek(operator_s);
-			while(((top_op != NULL) && (top_op->token->symbol != '('))) {
+			while(((top_op != NULL) && (top_op->token->symbol != '(')) && (top_op->token->precedence >= t->precedence)) {
 				push(operand_s, assign_operands_to_operator(operand_s, pop(operator_s)));
 				top_op = stack_peek(operator_s);
 			}
@@ -71,7 +71,7 @@ expr_tree *infix_to_exprtree(char *input) {
 			}
 			// Make sure the top of the operator is a left parenthesis
 			if(stack_peek(operator_s) == NULL) {
-				fprintf(stderr, "Error: A right parenthesis had no pairing left parenthesis.\n");
+				fprintf(stderr, "Syntax Error: A right parenthesis had no pairing left parenthesis.\n");
 				exit(1);
 			}
 			// Discard the left parenthesis at the top of the stack
@@ -85,7 +85,7 @@ expr_tree *infix_to_exprtree(char *input) {
 		//assert("A left parenthesis was not closed." && stack_peek(operator_s)->token->symbol != '(');
 		// Make sure there is no lone left parenthesis
 		if(stack_peek(operator_s)->token->symbol == '(') {
-			fprintf(stderr, "Error: A left parenthesis was not closed.\n");
+			fprintf(stderr, "Syntax Error: A left parenthesis was not closed.\n");
 			exit(1);
 		}
 		push(operand_s, assign_operands_to_operator(operand_s, pop(operator_s)));
@@ -94,7 +94,7 @@ expr_tree *infix_to_exprtree(char *input) {
 	expr_tree *root=pop(operand_s);
 	// Check if there are still some operands remaining in operand stack
 	if(stack_peek(operand_s) != NULL) {
-		fprintf(stderr, "Error: There are operands with missing operators.\n");
+		fprintf(stderr, "Syntax Error: There are operands with missing operators.\n");
 		exit(1);
 	}
 	
@@ -160,7 +160,7 @@ static expr_tree *parse_prefix(char **input) {
     struct Token *t = gettok(input);
     // error handling
     if(t->tok == tok_eof) {
-        fprintf(stderr, "Error: Unexpected end of input while parsing prefix expression.\n");
+        fprintf(stderr, "Syntax Error: Unexpected end of input while parsing prefix expression.\n");
         exit(1);
     }
     // Create a new tree node for this token
@@ -173,7 +173,7 @@ static expr_tree *parse_prefix(char **input) {
        // error handling
         const char *valid_ops = "+-*/";  
         if(!strchr(valid_ops, t->symbol)) {
-            fprintf(stderr, "Error: Unsupported operator '%c' in prefix expression.\n", t->symbol);
+            fprintf(stderr, "Syntax Error: Unsupported operator '%c' in prefix expression.\n", t->symbol);
             exit(1);
         }
         
@@ -183,7 +183,7 @@ static expr_tree *parse_prefix(char **input) {
     }
     else {
         // Catches invalid token types 
-        fprintf(stderr, "Error: Invalid token '%c' in prefix expression.\n", t->symbol);
+        fprintf(stderr, "Syntax Error: Invalid token '%c' in prefix expression.\n", t->symbol);
         exit(1);
     }
 }
@@ -194,7 +194,7 @@ expr_tree *prefix_to_exprtree(char *input) {
     // error handling
     struct Token *t = gettok(&input_ptr);
     if(t->tok != tok_eof) {
-        fprintf(stderr, "Error: Extra tokens after prefix expression.\n");
+        fprintf(stderr, "Syntax Error: Extra tokens after prefix expression.\n");
         exit(1);
     }
     
@@ -216,35 +216,70 @@ expr_tree *postfix_to_exprtree(char *input){
  		//If token is an operator,pop the 2 operands in operand stack and put it to the left and the right child of the,create a new node for the combined operator and operands and push it to operand stack
  		else if(t->tok == tok_operator)
  		{
+			/*
  			expr_tree* right_child = pop(operand_s);
  			expr_tree* left_child = pop(operand_s);
  			expr_tree* op_node = create_node(t);
  			op_node->left_child = left_child;
  			op_node->right_child = right_child;
- 			push(operand_s,op_node);
+			*/
+ 			push(operand_s, assign_operands_to_operator(operand_s, create_node(t)));
  		}
 		//If the token is invalid
 		else if(t->tok == tok_leftp || t->tok == tok_rightp)
 		{
-			fprintf(stderr, "Error: Invalid token '%c' in postfix expression.\n", t->symbol);
+			fprintf(stderr, "Syntax Error: Invalid token '%c' in postfix expression.\n", t->symbol);
  			exit(1);
 		}
  	}while(t->tok != tok_eof);
  
  	expr_tree *root=pop(operand_s);
+	// Check for remaining tokens
+	if(stack_peek(operand_s) != NULL) {
+		fprintf(stderr, "Syntax Error: Malformed expression, expression has missing operators for operands.\n");
+		exit(1);
+	}
+
  	return root;
  }
- //postfix traversal
- void postfix_traversal(expr_tree *root)
- {
- 	if(root == NULL)
-         	return;
- 	// Print current node 
-     	postfix_traversal(root->left_child);
-     	postfix_traversal(root->right_child);
-     
-     	if(root->token->tok == tok_number)
-         	printf("%d ", root->token->symbol);
-     	else
-         	printf("%c ", root->token->symbol);
- }
+//postfix traversal
+void postfix_traversal(expr_tree *root)
+{
+if(root == NULL)
+		return;
+// Print current node 
+	postfix_traversal(root->left_child);
+	postfix_traversal(root->right_child);
+ 
+	if(root->token->tok == tok_number)
+		printf("%d ", root->token->symbol);
+	else
+		printf("%c ", root->token->symbol);
+}
+
+// Evaluates tree recursively
+int eval_tree(expr_tree *root) {
+	// Check if current node is a leaf node (operand)
+	if(root->left_child==NULL || root->right_child==NULL) {
+		return root->token->symbol;
+	}	
+
+	switch(root->token->symbol) {
+		case '+':
+			return eval_tree(root->left_child) + eval_tree(root->right_child);
+		case '-':
+			return eval_tree(root->left_child) - eval_tree(root->right_child);
+		case '*':
+			return eval_tree(root->left_child) * eval_tree(root->right_child);
+		case '/':
+			if(root->right_child->token->symbol == 0) {
+				fprintf(stderr, "Evaluation Error: Division by Zero.\n");
+				exit(1);
+			}
+			return eval_tree(root->left_child) / eval_tree(root->right_child);
+		default:
+			fprintf(stderr, "Evaluation Error: Encountered unknown operator %c while evaluating expression.", root->token->symbol);
+			exit(1);
+	}
+}
+
