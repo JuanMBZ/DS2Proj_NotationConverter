@@ -5,7 +5,7 @@ Project for CS110 - Discrete Structures 2. CLI Utility Program to convert numeri
 OS: Linux (Recommended), Windows 11
 Programs: 
 - gcc (Latest version)
-- make [Optional]
+- GNU make [Optional]
 - git [Optional]
 
 ## Compiling 
@@ -15,7 +15,7 @@ Download the source code either by using git:
 
 Or by directly downloading the source files from this repository.
 
-To compile (assuming gcc is already in your system), if your system has the make program, just run:
+To compile (assuming gcc is already in your system) with make, just run:
 > make  
 
 Otherwise, run with gcc:  
