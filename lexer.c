@@ -11,7 +11,7 @@ struct Token* gettok(char **s) {
 	struct Token *t;
 	t = malloc(sizeof(struct Token));
 
-	while(isspace(**s))
+	while(isspace(**s) || **s == '_')
 		(*s)++;
 	
 	char c = **s;

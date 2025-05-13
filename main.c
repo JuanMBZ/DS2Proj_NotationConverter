@@ -8,6 +8,7 @@
 #include "expression_tree.h"
 #include "dstructs.h"
 
+#define GUIDE_FILE "GUIDE.txt"
 enum Format {
 	infix, prefix, postfix, EMPTY
 };
@@ -15,17 +16,33 @@ enum Format {
 void print_usage(char *prog_name) {
 	fprintf(stderr, "Usage: %s [Options] --from <input_format> --to <output_format> \"<expression_string>\"\n", prog_name);
 	fprintf(stderr, "   or: %s [Options] <input_format> <output_format> \"<expression_string>\"\n", prog_name);
+	fprintf(stderr, "\nExample: %s --evaluate --from infix --to postfix \"1+2-3\"\n", prog_name);
+	fprintf(stderr, "          %s --neccessary --evaluate postfix infix \"1 2 + 3 -\"\n", prog_name);
 	fprintf(stderr, "\nWhere:\n");
 	fprintf(stderr, "   <input_format> and <output_format> = [infix | prefix | postfix]\n");
-	fprintf(stderr, "   <expression_string>                = Any valid numerical expression. Numbers can range from [1, 1000000000).\n");
+	fprintf(stderr, "   <expression_string>                = Any valid numerical expression. Numbers can range from [0, 1000000000).\n");
 	fprintf(stderr, "                                        Operators are limited to +,-,* and /, (in addition to left and right parenthesis in infix notation).\n"); 
 	fprintf(stderr, "\nOptions:\n");
 	fprintf(stderr, "   -e, --evaluate         Evaluates the expression and prints the result\n");
 	fprintf(stderr, "   -n, --neccessary       Prints an output with INFIX notation with minimal/neccessary parentheses\n");
 	fprintf(stderr, "   -h, --help             Display this help text and exit\n");
 	fprintf(stderr, "   -g, --guide            Prints the manual for this program\n");
-	fprintf(stderr, "\n");
 	exit(0);
+}
+
+void print_guide() {
+	FILE *fptr = fopen(GUIDE_FILE, "r");
+	if(fptr == NULL) {
+		fprintf(stderr, "Guide file not found make sure you included the 'GUIDE.txt' file from the repository.\n");
+		exit(1);
+	}
+	printf("This guide can be read from the 'GUIDE.txt' file included in the repository.\n\n");
+	
+	char ch;
+	while((ch = fgetc(fptr)) != EOF)
+		putchar(ch);
+
+	fclose(fptr);
 }
 
 void assign_format(int *format, char *optarg, char **argv) {
@@ -36,8 +53,8 @@ void assign_format(int *format, char *optarg, char **argv) {
 	else if(strcmp(optarg, "postfix") == 0)
 		*format=postfix;
 	else {
-		fprintf(stderr, "Error: %s.\nUse %s --help to print program usage.\n", strerror(EINVAL), argv[0]);
-		exit(EINVAL);
+		fprintf(stderr, "Error: Invalid argument(s).\nUse %s --help to print program usage.\n", argv[0]);
+		exit(1);
 	}
 }
 
@@ -77,7 +94,8 @@ int main(int argc, char *argv[]) {
 				print_usage(argv[0]);
 				break;
 			case 'g':
-				break;
+				print_guide();
+				return 0;
 			case 'e':
 				eval_flag=1;
 				break;

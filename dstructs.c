@@ -40,7 +40,7 @@ expr_tree *pop(stack *s) {
 	// Check if there's something at the top of stack s
 	if(s->top < 0) {
 		//assert(("Stack underflow error, input expression has missing symbols.\n" && s->top < 0));
-		fprintf(stderr, "Stack Underflow Error: Malformed expression.\n");
+		fprintf(stderr, "Stack Underflow Error: Malformed expression, operator(s) with missing operands.\n");
 		exit(1);
 	}
 	

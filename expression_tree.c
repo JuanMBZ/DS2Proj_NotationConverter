@@ -216,13 +216,6 @@ expr_tree *postfix_to_exprtree(char *input){
  		//If token is an operator,pop the 2 operands in operand stack and put it to the left and the right child of the,create a new node for the combined operator and operands and push it to operand stack
  		else if(t->tok == tok_operator)
  		{
-			/*
- 			expr_tree* right_child = pop(operand_s);
- 			expr_tree* left_child = pop(operand_s);
- 			expr_tree* op_node = create_node(t);
- 			op_node->left_child = left_child;
- 			op_node->right_child = right_child;
-			*/
  			push(operand_s, assign_operands_to_operator(operand_s, create_node(t)));
  		}
 		//If the token is invalid
