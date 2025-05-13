@@ -35,5 +35,5 @@ The program was designed with simplicity and with the aim to learn fundamental d
 
 Limitations of the program include:
 1. No built-in functionality for other operators such as unary operators, the exponent operator(^), the modulo operator(%), functions, etc.
-2. Since C doesn't offer much options for error-handling like C++, Java or Python, error-handling in this program does not go too in-depth, but is still provides sufficient information to be understood.
-3. Only tested for the latest Linux kernel and Windows 11 so there is no assurance for other OS. Program was also only compiled for the latest version of gcc.
+2. Since C doesn't offer much options for error-handling like C++, Java or Python, error-handling in this program does not go too in-depth, but still provides sufficient information to be understood.
+3. Only tested for the latest Linux kernel and Windows 11 so there is no assurance for it to work properly on other OS. Program was also only tested/compiled for the latest version of gcc.
