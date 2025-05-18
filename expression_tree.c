@@ -13,19 +13,6 @@
 
 // Creates an expression tree given a valid infix expression input
 // Implements shunting yard algorithm defined in https://en.wikipedia.org/wiki/Shunting_yard_algorithm, with changes to output an expr_tree
-void test_postfix(expr_tree *root) {
-	if(root == NULL) 
-		return;
-
-	test_postfix(root->left_child);
-	test_postfix(root->right_child);
-	
-	if(root->token->tok == tok_number)
-		printf("%d ", root->token->symbol);
-	else
-		printf("%c ", root->token->symbol);
-}
-
 // Returns the root node to the expression tree
 expr_tree *infix_to_exprtree(char *input) {
 	struct Token *t;
